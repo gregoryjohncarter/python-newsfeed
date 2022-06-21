@@ -22,9 +22,7 @@ class User(Base):
   password = Column(String(100), nullable=False)
 
   @validates('email')
-
   def validate_email(self, key, email):
-
     # make sure email address contains @ character
 
     assert '@' in email
@@ -32,11 +30,14 @@ class User(Base):
     return email
 
   @validates('password')
-
   def validate_password(self, key, password):
-
     assert len(password) > 4
 
     # encrypt password
-
     return bcrypt.hashpw(password.encode('utf-8'), salt)
+
+  def verify_password(self, password):
+    return bcrypt.checkpw(
+      password.encode('utf-8'),
+      self.password.encode('utf-8')
+    )
